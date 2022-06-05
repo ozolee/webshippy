@@ -3,25 +3,25 @@
 
 class Order
 {
-    private int $product_id;
+    private int $productId;
     private int $quantity;
     private int $priority;
-    private string $created_at;
+    private string $createdAt;
 
     /**
      * @return int
      */
     public function getProductId(): int
     {
-        return $this->product_id;
+        return $this->productId;
     }
 
     /**
-     * @param int $product_id
+     * @param int $productId
      */
-    public function setProductId(int $product_id): void
+    public function setProductId(int $productId): void
     {
-        $this->product_id = $product_id;
+        $this->productId = $productId;
     }
 
     /**
@@ -61,14 +61,14 @@ class Order
      */
     public function getCreatedAt(): string
     {
-        return $this->created_at;
+        return $this->createdAt;
     }
 
     /**
-     * @param string $created_at
+     * @param string $createdAt
      */
-    public function setCreatedAt(string $created_at): void
+    public function setCreatedAt(string $createdAt): void
     {
-        $this->created_at = $created_at;
+        $this->createdAt = $createdAt;
     }
 }

@@ -1,18 +1,20 @@
 <?php
 
-include ('Entity\Order.php');
+include ('..\Entity\Order.php');
 
 class Orders
 {
-    public function readOrdersFromCsv()
+    public const RESOURCE_PATH = "..\Resource";
+
+    public function readOrdersFromCsv(): array
     {
         $orders = array();
-        $header_labels = array();
-        $row_counter = 1;
-        if (($file = fopen('orders.csv', 'r')) !== false) {
+        $headerLabels = array();
+        $rowCounter = 1;
+        if (($file = fopen(Orders::RESOURCE_PATH . '\Orders.csv', 'r')) !== false) {
             while (($data = fgetcsv($file)) !== false) {
-                if ($row_counter == 1) {
-                    $header_labels = $data;
+                if ($rowCounter == 1) {
+                    $headerLabels = $data;
                 } else {
                     $order = new Order();
                     $order->setProductId($data[0]);
@@ -21,11 +23,10 @@ class Orders
                     $order->setCreatedAt($data[3]);
                     $orders[] = $order;
                 }
-                $row_counter++;
+                $rowCounter++;
             }
             fclose($file);
         }
-        return array($orders, $header_labels);
+        return array($orders, $headerLabels);
     }
-
 }

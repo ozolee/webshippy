@@ -1,6 +1,6 @@
 <?php
 
-include('Helper\FulfillableOrders.php');
+include('..\Helper\FulfillableOrders.php');
 
 if (!isset($argc) || $argc != 2) {
     echo 'Ambiguous number of parameters!';
@@ -14,8 +14,8 @@ if (($stock = json_decode($argv[1])) == null) {
 
 try {
     $helper = new FulfillableOrders();
-    echo $helper->getHeaderRow();
-    echo $helper->getBodyRow($stock);
+    echo $helper->getTableHeader();
+    echo $helper->getOrdersBody($stock);
 } catch (Exception $e) {
     echo "Error message: " . $e->getMessage();
     exit;

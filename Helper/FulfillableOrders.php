@@ -2,12 +2,12 @@
 
 use JetBrains\PhpStorm\Pure;
 
-include('Repository\Orders.php');
+include('..\Repository\Orders.php');
 
 class FulfillableOrders
 {
 
-    private array $header_labels;
+    private array $headerLabels;
     private array $orders;
     private Orders $repository;
 
@@ -19,7 +19,7 @@ class FulfillableOrders
 
     private function readOrders()
     {
-        list($this->orders, $this->header_labels) = $this->repository->readOrdersFromCsv();
+        list($this->orders, $this->headerLabels) = $this->repository->readOrdersFromCsv();
         $this->orderSorting();
     }
 
@@ -31,42 +31,72 @@ class FulfillableOrders
         });
     }
 
-    public function getHeaderRow(): string
+    public function getTableHeader(): string
     {
-        $header_first_row = "";
-        $header_second_row = "";
-        foreach ($this->header_labels as $label) {
-            $header_first_row .= str_pad($label, 20);
-            $header_second_row .= str_repeat('=', 20);;
+        $headerFirstRow = "";
+        $headerSecondRow = "";
+        foreach ($this->headerLabels as $label) {
+            $headerFirstRow .= str_pad($label, 20);
+            $headerSecondRow .= str_repeat('=', 20);;
         }
-        return $header_first_row . "\n" . $header_second_row . "\n";
+        return $headerFirstRow . "\n" . $headerSecondRow . "\n";
     }
 
     /**
      * @param $stock
      * @return string
      */
-    #[Pure] public function getBodyRow($stock): string
+    #[Pure] public function getOrdersBody($stock): string
     {
-        $table_body = "";
+        $tableBody = "";
         /** @var Order $order */
         foreach ($this->orders as $order) {
             if ($stock->{$order->getProductId()} >= $order->getQuantity()) {
-                foreach ($this->header_labels as $label) {
-                    $table_body .= match ($label) {
-                        'product_id' => str_pad($order->getProductId(), 20),
-                        'quantity' => str_pad($order->getQuantity(), 20),
-                        'priority' => match ($order->getPriority()) {
-                            1 => str_pad('low', 20),
-                            2 => str_pad('medium', 20),
-                            3 => str_pad('high', 20),
-                        },
-                        'created_at' => str_pad($order->getCreatedAt(), 20),
-                    };
-                }
-                $table_body .= "\n";
+                $tableBody .= $this->getTableBody($order);
             }
         }
-        return $table_body;
+        return $tableBody;
+    }
+
+    /**
+     * @param Order $order
+     * @return string
+     */
+    #[Pure] private function getTableBody(Order $order): string
+    {
+        $tableBody = "";
+        foreach ($this->headerLabels as $label) {
+            $tableBody .= str_pad($this->matchLabel($label, $order), 20);
+        }
+        $tableBody .= "\n";
+        return $tableBody;
+    }
+
+    /**
+     * @param $label
+     * @param Order $order
+     * @return string
+     */
+    #[Pure] private function matchLabel($label, Order $order): string
+    {
+        return match ($label) {
+            'product_id' => $order->getProductId(),
+            'quantity' => $order->getQuantity(),
+            'priority' => $this->matchPriorityLevel($order->getPriority()),
+            'created_at' => $order->getCreatedAt(),
+        };
+    }
+
+    /**
+     * @param $priority
+     * @return string
+     */
+    private function matchPriorityLevel($priority): string
+    {
+        return match ($priority) {
+            1 => 'low',
+            2 => 'medium',
+            3 => 'high',
+        };
     }
 }
