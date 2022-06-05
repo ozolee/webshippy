@@ -7,9 +7,15 @@ class FulfillableOrdersTest extends FulfillableOrders
 {
     public function sortOrdersTest(): string
     {
-        $response = "";
+        $response = $this->sortOrdersTestSortingCase();
+        $response .= $this->sortOrdersTestNotSortingCase();
 
-        // Sorting Case
+        return $this->getTestSummaryResponse($response, "Wrong order sorting.", "Exact order sorting.");
+    }
+
+    private function sortOrdersTestSortingCase(): string
+    {
+        $response = "";
         $this->orders = [
             0 => $this->initOrder(1, 3,1, "2022-05-25 15:50:47"),
             1 => $this->initOrder(3, 2,3, "2022-05-20 10:30:32"),
@@ -22,7 +28,12 @@ class FulfillableOrdersTest extends FulfillableOrders
         if ($this->orders[1]->getProductId() !== 2) {$response .= str_pad("Failed", 20) . "Invalid order sorting. \n";}
         if ($this->orders[2]->getProductId() !== 1) {$response .= str_pad("Failed", 20) . "Invalid order sorting. \n";}
 
-        // Not Sorting Case
+        return $response;
+    }
+
+    private function sortOrdersTestNotSortingCase(): string
+    {
+        $response = "";
         $this->orders = [
             0 => $this->initOrder(3, 2,3, "2022-05-20 10:30:32"),
             1 => $this->initOrder(1, 3,1, "2022-05-25 15:50:47")
@@ -33,7 +44,7 @@ class FulfillableOrdersTest extends FulfillableOrders
         if ($this->orders[0]->getProductId() !== 3) {$response .= str_pad("Failed", 20) . "Invalid order not sorting. \n";}
         if ($this->orders[1]->getProductId() !== 1) {$response .= str_pad("Failed", 20) . "Invalid order not sorting. \n";}
 
-        return $this->getTestSummaryResponse($response, "Wrong order sorting.", "Exact order sorting.");
+        return $response;
     }
 
     /**
@@ -50,32 +61,52 @@ class FulfillableOrdersTest extends FulfillableOrders
         $order->setQuantity($quantity);
         $order->setPriority($priority);
         $order->setCreatedAt($createdAt);
+
         return $order;
     }
 
     public function getTableHeaderTest(): string
     {
+        $response = $this->getTableHeaderTestFilledCase();
+        $response .= $this->getTableHeaderTestEmptyCase();
+
+        return $this->getTestSummaryResponse($response, "Wrong table header creation.", "Exact table header creation.");
+    }
+
+    private function getTableHeaderTestFilledCase(): string
+    {
         $response = "";
-        // Filled Header Case
         $expectedFilledTableHeader = "product_id          quantity            priority            created_at          \n================================================================================\n";
 
         $this->headerLabels = array("product_id", "quantity", "priority", "created_at");
         $tableHeader = $this->getTableHeader();
         if (strcmp($tableHeader, $expectedFilledTableHeader)) {$response .= str_pad("Failed", 20) . "Invalid filled table header creation. \n";}
 
-        // Empty Header Case
+        return $response;
+    }
+
+    private function getTableHeaderTestEmptyCase(): string
+    {
+        $response = "";
         $expectedEmptyTableHeader = "\n\n";
         $this->headerLabels = array();
         $tableHeader = $this->getTableHeader();
         if (strcmp($tableHeader, $expectedEmptyTableHeader)) {$response .= str_pad("Failed", 20) . "Invalid empty table header creation. \n";}
 
-        return $this->getTestSummaryResponse($response, "Wrong table header creation.", "Exact table header creation.");
+        return $response;
     }
 
     public function getOrdersBodyTest(): string
     {
+        $response = $this->getOrdersBodyTestFilledCase();
+        $response .= $this->getOrdersBodyTestEmptyCase();
+
+        return $this->getTestSummaryResponse($response, "Wrong table body creation.", "Exact table body creation.");
+    }
+
+    private function getOrdersBodyTestFilledCase(): string
+    {
         $response = "";
-        // Filled Table Case
         $expectedFilledContent = "1                   2                   high                2021-03-25 14:51:47 \n2                   1                   medium              2021-03-21 14:00:26 \n3                   1                   medium              2021-03-22 12:31:54 \n1                   1                   low                 2021-03-25 19:08:22 \n";
         $stock = json_decode('{"1":2,"2":1,"3":1}');
         $this->readTableData();
@@ -83,7 +114,12 @@ class FulfillableOrdersTest extends FulfillableOrders
         $filledTableBodyContent = $this->getOrdersBody($stock);
         if (strcmp($filledTableBodyContent, $expectedFilledContent)) {$response .= str_pad("Failed", 20) . "Invalid filled table body creation. \n";}
 
-        // Empty Table Case
+        return$response;
+    }
+
+    private function getOrdersBodyTestEmptyCase(): string
+    {
+        $response = "";
         $expectedEmptyContent = "";
         $stock = json_decode('{"1":0,"2":0,"3":0}');
         $this->readTableData();
@@ -91,7 +127,7 @@ class FulfillableOrdersTest extends FulfillableOrders
         $emptyTableBodyContent = $this->getOrdersBody($stock);
         if (strcmp($emptyTableBodyContent, $expectedEmptyContent)) {$response .= str_pad("Failed", 20) . "Invalid empty table body creation. \n";}
 
-        return $this->getTestSummaryResponse($response, "Wrong table body creation.", "Exact table body creation.");
+        return$response;
     }
 
     public function matchLabelTest(): string
