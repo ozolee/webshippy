@@ -1,29 +1,25 @@
 <?php
 
-use JetBrains\PhpStorm\Pure;
-
-include('..\Repository\Orders.php');
+include_once('..\Repository\Orders.php');
 
 class FulfillableOrders
 {
 
-    private array $headerLabels;
-    private array $orders;
+    protected array $headerLabels;
+    protected array $orders;
     private Orders $repository;
 
     public function __construct()
     {
         $this->repository = new Orders();
-        $this->readOrders();
     }
 
-    private function readOrders()
+    public function readTableData()
     {
         list($this->orders, $this->headerLabels) = $this->repository->readOrdersFromCsv();
-        $this->orderSorting();
     }
 
-    private function orderSorting()
+    public function sortOrders()
     {
         usort( $this->orders, function (Order $a, Order $b) {
             $pc = -1 * ($a->getPriority() <=> $b->getPriority());
@@ -46,7 +42,7 @@ class FulfillableOrders
      * @param $stock
      * @return string
      */
-    #[Pure] public function getOrdersBody($stock): string
+    public function getOrdersBody($stock): string
     {
         $tableBody = "";
         /** @var Order $order */
@@ -62,7 +58,7 @@ class FulfillableOrders
      * @param Order $order
      * @return string
      */
-    #[Pure] private function getTableBody(Order $order): string
+    private function getTableBody(Order $order): string
     {
         $tableBody = "";
         foreach ($this->headerLabels as $label) {
@@ -77,7 +73,7 @@ class FulfillableOrders
      * @param Order $order
      * @return string
      */
-    #[Pure] private function matchLabel($label, Order $order): string
+    protected function matchLabel($label, Order $order): string
     {
         return match ($label) {
             'product_id' => $order->getProductId(),
@@ -91,7 +87,7 @@ class FulfillableOrders
      * @param $priority
      * @return string
      */
-    private function matchPriorityLevel($priority): string
+    protected function matchPriorityLevel($priority): string
     {
         return match ($priority) {
             1 => 'low',

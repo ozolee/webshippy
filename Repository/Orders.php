@@ -1,6 +1,6 @@
 <?php
 
-include ('..\Entity\Order.php');
+include_once('..\Entity\Order.php');
 
 class Orders
 {
