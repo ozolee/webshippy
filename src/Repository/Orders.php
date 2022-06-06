@@ -8,10 +8,11 @@ class Orders
 {
     public function readOrdersFromCsv(): array
     {
+        $path = pathinfo(__DIR__);
         $orders = array();
         $headerLabels = array();
         $rowCounter = 1;
-        if (($file = fopen('..\Orders.csv', 'r')) !== false) {
+        if (($file = fopen($path['dirname'] . '\Resource\Orders.csv', 'r')) !== false) {
             while (($data = fgetcsv($file)) !== false) {
                 if ($rowCounter == 1) {
                     $headerLabels = $data;
