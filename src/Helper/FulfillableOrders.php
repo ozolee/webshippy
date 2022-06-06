@@ -1,6 +1,9 @@
 <?php
 
-include_once('..\Repository\Orders.php');
+namespace src\Helper;
+
+use src\Entity\Order;
+use src\Repository\Orders;
 
 class FulfillableOrders
 {

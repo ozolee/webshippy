@@ -1,6 +1,8 @@
 <?php
 
-include_once('..\Repository\Orders.php');
+namespace src\Tests;
+
+use src\Repository\Orders;
 
 class OrdersTest extends Orders
 {

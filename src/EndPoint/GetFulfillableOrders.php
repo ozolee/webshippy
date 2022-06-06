@@ -1,6 +1,8 @@
 <?php
 
-include_once('..\Helper\FulfillableOrders.php');
+require_once '..\..\vendor\autoload.php';
+
+use src\Helper\FulfillableOrders;
 
 if (!isset($argc) || $argc != 2) {
     echo 'Ambiguous number of parameters!';

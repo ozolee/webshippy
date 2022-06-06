@@ -1,7 +1,9 @@
 <?php
 
-include_once('..\Helper\FulfillableOrders.php');
-include_once('..\Entity\Order.php');
+namespace src\Tests;
+
+use src\Entity\Order;
+use src\Helper\FulfillableOrders;
 
 class FulfillableOrdersTest extends FulfillableOrders
 {

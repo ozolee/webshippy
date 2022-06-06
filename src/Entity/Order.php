@@ -1,5 +1,6 @@
 <?php
 
+namespace src\Entity;
 
 class Order
 {

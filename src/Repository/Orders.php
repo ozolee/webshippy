@@ -1,6 +1,8 @@
 <?php
 
-include_once('..\Entity\Order.php');
+namespace src\Repository;
+
+use src\Entity\Order;
 
 class Orders
 {

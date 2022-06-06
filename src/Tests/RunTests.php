@@ -1,7 +1,9 @@
 <?php
 
-include_once ('OrdersTest.php');
-include_once ('FulfillableOrdersTest.php');
+include_once '..\..\vendor\autoload.php';
+
+use src\Tests\FulfillableOrdersTest;
+use src\Tests\OrdersTest;
 
 try {
     $ordersTest = new OrdersTest();
