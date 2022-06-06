@@ -16,10 +16,10 @@ if (($stock = json_decode($argv[1])) == null) {
 
 try {
     $helper = new FulfillableOrders();
-    $helper->readTableData();
-    $helper->sortOrders();
-    echo $helper->getTableHeader();
-    echo $helper->getOrdersBody($stock);
+    list($orders, $headerLabels) = $helper->readTableData();
+    $orders = $helper->sortOrders($orders);
+    echo $helper->getTableHeader($headerLabels);
+    echo $helper->getOrdersBody($stock, $orders, $headerLabels);
 } catch (Exception $e) {
     echo "Error message: " . $e->getMessage();
     exit;

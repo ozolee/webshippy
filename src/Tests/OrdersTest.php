@@ -1,18 +1,33 @@
 <?php
+declare(strict_types=1);
 
 namespace src\Tests;
 
+use PHPUnit\Framework\TestCase;
 use src\Repository\Orders;
 
-class OrdersTest extends Orders
+class OrdersTest extends TestCase
 {
-    public function readOrdersFromCsvTest(): string
+    /**
+     * @test
+     * @dataProvider orderReaderProvider
+     * @param int $orderExpectedCounter
+     * @param int $headerExpectedCounter
+     */
+    public function readOrdersFromCsvTest(int $orderExpectedCounter, int $headerExpectedCounter)
     {
-        $response = "";
-        list($orders, $headerLabels) = $this->readOrdersFromCsv();
-        if (!is_array($orders) || (count($orders) != 10)) {$response .= str_pad("Failed", 20) . "Invalid order data from CSV. \n";}
-        if (!is_array($headerLabels) || (count($headerLabels) != 4)) {$response .= str_pad("Failed", 20) . "Invalid header data from CSV. \n";}
-        ($response != "") ? $response .= str_pad("Attention", 20) . "Wrong data from CSV. \n" : $response .= str_pad("Success", 20) . "Exact data from CSV. \n";
-        return $response;
+        $repository = new Orders();
+
+        list($orders, $headerLabels) = $repository->readOrdersFromCsv();
+
+        $this->assertCount($orderExpectedCounter, $orders);
+        $this->assertCount($headerExpectedCounter, $headerLabels);
+    }
+
+    public function orderReaderProvider(): array
+    {
+        return array(
+            array(10, 4)
+        );
     }
 }

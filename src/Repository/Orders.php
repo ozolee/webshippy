@@ -6,14 +6,12 @@ use src\Entity\Order;
 
 class Orders
 {
-    public const RESOURCE_PATH = "..\Resource";
-
     public function readOrdersFromCsv(): array
     {
         $orders = array();
         $headerLabels = array();
         $rowCounter = 1;
-        if (($file = fopen(Orders::RESOURCE_PATH . '\Orders.csv', 'r')) !== false) {
+        if (($file = fopen('..\Orders.csv', 'r')) !== false) {
             while (($data = fgetcsv($file)) !== false) {
                 if ($rowCounter == 1) {
                     $headerLabels = $data;

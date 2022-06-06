@@ -7,9 +7,6 @@ use src\Repository\Orders;
 
 class FulfillableOrders
 {
-
-    protected array $headerLabels;
-    protected array $orders;
     private Orders $repository;
 
     public function __construct()
@@ -17,24 +14,25 @@ class FulfillableOrders
         $this->repository = new Orders();
     }
 
-    public function readTableData()
+    public function readTableData(): array
     {
-        list($this->orders, $this->headerLabels) = $this->repository->readOrdersFromCsv();
+        return $this->repository->readOrdersFromCsv();
     }
 
-    public function sortOrders()
+    public function sortOrders(array $orders): array
     {
-        usort( $this->orders, function (Order $a, Order $b) {
+        usort( $orders, function (Order $a, Order $b) {
             $pc = -1 * ($a->getPriority() <=> $b->getPriority());
             return $pc == 0 ? $a->getCreatedAt() <=> $b->getCreatedAt() : $pc;
         });
+        return $orders;
     }
 
-    public function getTableHeader(): string
+    public function getTableHeader(array $headerLabels): string
     {
         $headerFirstRow = "";
         $headerSecondRow = "";
-        foreach ($this->headerLabels as $label) {
+        foreach ($headerLabels as $label) {
             $headerFirstRow .= str_pad($label, 20);
             $headerSecondRow .= str_repeat('=', 20);;
         }
@@ -43,15 +41,17 @@ class FulfillableOrders
 
     /**
      * @param $stock
+     * @param array $orders
+     * @param array $headerLabels
      * @return string
      */
-    public function getOrdersBody($stock): string
+    public function getOrdersBody($stock, array $orders, array $headerLabels): string
     {
         $tableBody = "";
         /** @var Order $order */
-        foreach ($this->orders as $order) {
+        foreach ($orders as $order) {
             if ($stock->{$order->getProductId()} >= $order->getQuantity()) {
-                $tableBody .= $this->getTableBody($order);
+                $tableBody .= $this->getTableBody($order, $headerLabels);
             }
         }
         return $tableBody;
@@ -59,12 +59,13 @@ class FulfillableOrders
 
     /**
      * @param Order $order
+     * @param array $headerLabels
      * @return string
      */
-    private function getTableBody(Order $order): string
+    private function getTableBody(Order $order, array $headerLabels): string
     {
         $tableBody = "";
-        foreach ($this->headerLabels as $label) {
+        foreach ($headerLabels as $label) {
             $tableBody .= str_pad($this->matchLabel($label, $order), 20);
         }
         $tableBody .= "\n";
@@ -76,7 +77,7 @@ class FulfillableOrders
      * @param Order $order
      * @return string
      */
-    protected function matchLabel($label, Order $order): string
+    public function matchLabel($label, Order $order): string
     {
         return match ($label) {
             'product_id' => $order->getProductId(),
@@ -87,10 +88,10 @@ class FulfillableOrders
     }
 
     /**
-     * @param $priority
+     * @param int $priority
      * @return string
      */
-    protected function matchPriorityLevel($priority): string
+    public function matchPriorityLevel(int $priority): string
     {
         return match ($priority) {
             1 => 'low',
